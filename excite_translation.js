@@ -1,7 +1,7 @@
 /**
  * @fileOverview
  * @name excite-translation.js
- * @description Excite Translation (http://www.excite.co.jp/english) client
+ * @description Excite Translation (http://www.excite.co.jp/world) client
  * @author gongo <gonngo@gmail.com>
  * @license The MIT License
  */

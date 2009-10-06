@@ -1,0 +1,11 @@
+2009-10-06  gongo  <gonngo@gmail.com>
+
+	* TODO: excite_translation.js
+	- ShiftJIS関連
+	EscapeSJIS() は ecl.js (http://tinyurl.com/27cml3) から
+	抜粋している。ライブラリとして用意して読み込んだ方がいいと思うが、
+	手抜きでそのままファイルに書き込んでしまった。
+	動作に問題は今のところないので、時間があったら。
+
+	- 翻訳言語を増やす
+	現在は英和、和英だけなので、日中とか日仏とかいろいろ。

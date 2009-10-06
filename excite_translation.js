@@ -21,10 +21,12 @@
 
 key.setGlobalKey('C-1', function (ev, arg) {
     var trans_list = [];
-    trans_list.push(["je", "\u548C\u82F1"]);
     var JAEN = 0;
-    trans_list.push(["ej", "\u82F1\u548C"]);
     var ENJA = 1;
+ 
+   trans_list[JAEN] = ["je", "\u82F1\u548C"];
+   trans_list[ENJA] = ["ej", "\u548C\u82F1"];
+
     EscapeSJIS = function (str) {
         return str.replace(/[^*+.-9A-Z_a-z-]/g, function (s) {
             var c = s.charCodeAt(0),
@@ -63,8 +65,11 @@ key.setGlobalKey('C-1', function (ev, arg) {
                             return;
                         }
                         var text = xhr.responseText;
-                        text.match(/<textarea [^>]+after[^>]+>(.+)<\/textarea>/i);
-                        alert(RegExp.$1);
+                        text.match(/<textarea [^>]+before[^>]+>(.+)<\/textarea>/i);
+			before = RegExp.$1;
+			text.match(/<textarea [^>]+after[^>]+>(.+)<\/textarea>/i);
+			after = RegExp.$1;
+			display.prettyPrint(before + "\n\n" + after);
                     }
                 };
                 var uri = "http://www.excite.co.jp/world/english/?";

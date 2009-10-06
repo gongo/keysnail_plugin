@@ -1,3 +1,22 @@
+/**
+ * @fileOverview
+ * @name make_tinyurl.js
+ * @description TinyURL (http://tinyurl.com/) client
+ * @author gongo <gonngo@gmail.com>
+ * @license The MIT License
+ */
+
+/**
+ * Usage
+ *
+ * Paste this code to your keysnail.js file.
+ *
+ * Press 'C-2' key (or your defined one) to start this client.
+ *
+ * When the key is pushed on the site to be shortened,
+ * the title of the page and shortened URL are displayed with popup. 
+ */
+
 key.setGlobalKey('C-2', function (ev, arg) {
     var title = window.content.document.title;
     var target = encodeURIComponent(window.content.location.href);

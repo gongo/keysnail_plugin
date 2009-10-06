@@ -1,3 +1,24 @@
+/**
+ * @fileOverview
+ * @name excite-translation.js
+ * @description Excite Translation (http://www.excite.co.jp/english) client
+ * @author gongo <gonngo@gmail.com>
+ * @license The MIT License
+ */
+
+/**
+ * Usage
+ *
+ * Paste this code to your keysnail.js file.
+ *
+ * Press 'C-1' key (or your defined one) to start this client.
+ *
+ * First, select the translation method (ex. ja -> en, en->ja).
+ * Next, input string of the target, and push Enter key.
+ *
+ * The result of the translation is displayed by pop up.
+ */
+
 key.setGlobalKey('C-1', function (ev, arg) {
     var trans_list = [];
     trans_list.push(["je", "\u548C\u82F1"]);

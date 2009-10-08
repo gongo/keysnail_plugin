@@ -83,6 +83,8 @@ key.setGlobalKey('C-3', function (ev, arg) {
       message: "Select Translation",
       collection: city_list,
       callback: function (city_idx) {
+	  if (city_idx < 0) return;
+
 	  var city_id = city_list[city_idx][2];
 	  var city_name = city_list[city_idx][0];
 	  var day = "today"; // TODO

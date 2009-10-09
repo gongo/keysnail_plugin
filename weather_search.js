@@ -80,7 +80,7 @@ key.setGlobalKey('C-3', function (ev, arg) {
     city_list = getCityList();
 
     prompt.selector({
-      message: "Select Translation",
+      message: "Select City",
       collection: city_list,
       callback: function (city_idx) {
 	  if (city_idx < 0) return;

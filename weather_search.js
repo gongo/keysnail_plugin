@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @fileOverview
  * @name weather_search.js
  * @description Inform of weather information on the city in Japan
@@ -19,107 +19,125 @@
  */
 
 key.setGlobalKey('C-3', function (ev, arg) {
-    var city_list;
-    var listener = {
-      observe : function(subject, topic, data) {
-	  if (topic == "alertclickcallback") {
-	      gBrowser.loadOneTab(data, null, null, null, false);
-	  }
-	  if (!unPopUppedStatuses || !unPopUppedStatuses.length) {
-	      return;
-	  }
-      }
-    };
+				   var city_list;
+                   var listener = {
+                     observe : function(subject, topic, data) {
+                       if (topic == "alertclickcallback") {
+                         gBrowser.loadOneTab(data, null, null, null, false);
+                       }
+                       if (!unPopUppedStatuses || !unPopUppedStatuses.length) {
+                         return;
+                       }
+                     }
+                   };
 
+				   var actions = [
+					 [function (index) {
+						if (index >= 0) {
+						  popupWeatherReport(index, "today");
+						}
+					  }, "Report for today"],
+					 [function (index) {
+						if (index >= 0) {
+						  popupWeatherReport(index, "tomorrow");
+						}
+					  }, "Report for tomorrow"],
+					 [function (index) {
+						if (index >= 0) {
+						  popupWeatherReport(index, "dayaftertomorrow");
+						}
+					  }, "Report for dayaftertomorrow"]
+				   ];
 
-    function createHttpRequest() {
-	if (window.ActiveXObject) {
-	    try {
-		return new ActiveXObject("Msxml2.XMLHTTP");
-	    } catch(e) {
-		try {
-		    return new ActiveXObject("Microsoft.XMLHTTP");
-		} catch(e2) {
-		    return null;
-		}
-	    }
-	} else if (window.XMLHttpRequest) {
-	    return new XMLHttpRequest;
-	} else {
-	    return null;
-	}
-    }
+                   function createHttpRequest() {
+                     if (window.ActiveXObject) {
+                       try {
+                         return new ActiveXObject("Msxml2.XMLHTTP");
+                       } catch(e) {
+                         try {
+                           return new ActiveXObject("Microsoft.XMLHTTP");
+                         } catch(e2) {
+                           return null;
+                         }
+                       }
+                     } else if (window.XMLHttpRequest) {
+                       return new XMLHttpRequest;
+                     } else {
+                       return null;
+                     }
+                   }
 
-    function getCityList() {
-	var xhr = new XMLHttpRequest;
+                   function getCityList() {
+                     var xhr = new XMLHttpRequest;
 
-	xhr.open("GET", "http://weather.livedoor.com/forecast/rss/forecastmap.xml", false);
-	xhr.send("");
-	var data = [];
+                     xhr.open("GET", "http://weather.livedoor.com/forecast/rss/forecastmap.xml", false);
+                     xhr.send("");
+                     var data = [];
 
-	var xml = xhr.responseXML;
-	var areas = xml.getElementsByTagName("area");
+                     var xml = xhr.responseXML;
+                     var areas = xml.getElementsByTagName("area");
 
-	for (var i = 0; i < areas.length; i++) {
-	    var prefs = areas[i].getElementsByTagName("pref");
-	    for (var j = 0; j < prefs.length; j++) {
-		var cities = prefs[j].getElementsByTagName("city");
-		for (var k = 0; k < cities.length; k++) {
-		    var id = cities[k].attributes.getNamedItem("id").value;
-		    var area = areas[i].attributes.getNamedItem("title").value;
-		    var city = cities[k].attributes.getNamedItem("title").value;
+                     for (var i = 0; i < areas.length; i++) {
+                       var prefs = areas[i].getElementsByTagName("pref");
+                       for (var j = 0; j < prefs.length; j++) {
+                         var cities = prefs[j].getElementsByTagName("city");
+                         for (var k = 0; k < cities.length; k++) {
+                           var id = cities[k].attributes.getNamedItem("id").value;
+                           var area = areas[i].attributes.getNamedItem("title").value;
+                           var city = cities[k].attributes.getNamedItem("title").value;
 
-		    data.push([city, area, id.toString()]);
-		}
-	    }
-	}
+                           data.push([city, area, id.toString()]);
+                         }
+                       }
+                     }
 
-	return data;
-    }
+                     return data;
+                   }
 
-    city_list = getCityList();
+				   function popupWeatherReport(index, day) {
+                     var city_id = city_list[index][2];
+                     var city_name = city_list[index][0];
+                     var target = "http://weather.livedoor.com/forecast/webservice/rest/v1?"
+                       + "city=" + city_id + "&day=" + day;
 
-    prompt.selector({
-      message: "Select City",
-      collection: city_list,
-      callback: function (city_idx) {
-	  if (city_idx < 0) return;
+                     var xhr = createHttpRequest();
+                     var alertsService = Cc['@mozilla.org/alerts-service;1'].getService(Ci.nsIAlertsService);
 
-	  var city_id = city_list[city_idx][2];
-	  var city_name = city_list[city_idx][0];
-	  var day = "today"; // TODO
-	  var target = "http://weather.livedoor.com/forecast/webservice/rest/v1?"
-	    + "city=" + city_id + "&day=" + day;
+                     xhr.onreadystatechange = function (aEvent) {
+                       if (xhr.readyState == 4) {
+                         if (xhr.status != 200) {
+                           return;
+                         }
+                         var xml = xhr.responseXML;
+						 var telop = xml.getElementsByTagName("telop")[0].firstChild.textContent;
+						 var title = xml.getElementsByTagName("title")[0].firstChild.textContent;
+                         var image = xml.getElementsByTagName("image")[0];
+                         var link  = image.getElementsByTagName("link")[0].firstChild.nodeValue;
+                         var imgurl = image.getElementsByTagName("url")[0].firstChild.nodeValue;
 
-	  var xhr = createHttpRequest();
-	  var alertsService = Cc['@mozilla.org/alerts-service;1'].getService(Ci.nsIAlertsService);
+                         var temp = xml.getElementsByTagName("temperature")[0];
+                         var max = temp.firstElementChild.children[0].textContent; // 摂氏
+                         var min = temp.lastElementChild.children[0].textContent;
+                         if (max == "") { max = "--"; }
+                         if (min == "") { min = "--"; }
 
-	  xhr.onreadystatechange = function (aEvent) {
-	      if (xhr.readyState == 4) {
-		  if (xhr.status != 200) {
-		      return;
-		  }
-		  var xml = xhr.responseXML;
-		  var image = xml.getElementsByTagName("image")[0];
-		  var title = image.getElementsByTagName("title")[0].firstChild.nodeValue;
-		  var link  = image.getElementsByTagName("link")[0].firstChild.nodeValue;
-		  var image = image.getElementsByTagName("url")[0].firstChild.nodeValue;
+                         temp_str = "[最高/最低気温] : " + max + "/" + min;
+						 
+                         alertsService.showAlertNotification(imgurl, city_name, "[" + title + "] " + telop + "   " + temp_str,
+                                                             true, link, listener);
+                       }
+                     };
+                     xhr.open("GET", target, true);
+                     xhr.setRequestHeader("Content-Type", "text/xml");
+                     xhr.send("");
+                   }
 
-		  var temp = xml.getElementsByTagName("temperature")[0];
-		  var max = temp.firstElementChild.children[0].textContent; // 摂氏
-		  var min = temp.lastElementChild.children[0].textContent;
-		  if (max == "") { max = "--"; }
-		  if (min == "") { min = "--"; }
-		  temp_str = "最高/最低気温 : " + max + "/" + min;
+                   city_list = getCityList();
 
-		  alertsService.showAlertNotification(image, city_name, "天気: " + title + "  " + temp_str,
-						      true, link, listener);
-	      }
-	  }
-
-	  xhr.open("GET", target, true);
-	  xhr.setRequestHeader("Content-Type", "text/xml");
-	  xhr.send("");
-      }
-    });
-}, 'WeatherSearch');
+				   prompt.selector({message: "Select City",
+                                    collection: city_list,
+									flags: [0, 0, HIDDEN],
+									header: ["City", "Area", ""],
+									actions: actions});
+				   
+				 }, 'WeatherSearch');

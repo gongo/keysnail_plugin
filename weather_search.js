@@ -13,7 +13,9 @@
  *
  * Press 'C-3' key (or your defined one) to start this client.
  *
- * First, select the city that you want to check of weather information
+ * Select the city that you want to check of weather information.
+ * (optional) Press 'C-i' key, select weather infomation of day that
+ * "today", "tomorrow" and "dayaftertomorrow".
  *
  * The result of the weather information (weather kind and temperature celsius) is displayed by pop up.
  */

@@ -5,7 +5,7 @@ var PLUGIN_INFO =
     <description>Weather Infomation that search from livedoor displayed</description>
     <description lang="ja">ライブ天気情報を Keysnail から取得する</description>
     <version>1.11</version>
-    <updateURL>http://github.com/gongo/keysnail_plugin/blob/master/weather_search.ks.js</updateURL>
+    <updateURL>http://github.com/gongo/keysnail_plugin/raw/master/weather_search.ks.js</updateURL>
     <author mail="gonngo+github@gmail.com" homepage="http://d.hatena.ne.jp/gongoZ/">gongoZ</author>
     <license>The MIT License</license>
     <license lang="ja">MIT ライセンス</license>

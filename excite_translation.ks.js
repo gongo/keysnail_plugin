@@ -5,7 +5,7 @@ var PLUGIN_INFO =
 	<description>Translation (ja, en, etc...)</description>
     <description lang="ja">エキサイト翻訳を KeySnail から利用する</description>
     <version>1.10</version>
-    <updateURL>http://github.com/gongo/keysnail_plugin/blob/master/excite_translation.ks.js</updateURL>
+    <updateURL>http://github.com/gongo/keysnail_plugin/raw/master/excite_translation.ks.js</updateURL>
     <author mail="gonngo+github@gmail.com" homepage="http://d.hatena.ne.jp/gongoZ/">gongoZ</author>
     <license>The MIT License</license>
     <license lang="ja">MIT ライセンス</license>

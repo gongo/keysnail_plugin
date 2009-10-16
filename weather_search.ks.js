@@ -4,7 +4,7 @@ var PLUGIN_INFO =
     <name lang="ja">livedoor 天気情報 on KeySnail</name>
     <description>Weather Infomation that search from livedoor displayed</description>
     <description lang="ja">ライブ天気情報を Keysnail から取得する</description>
-    <version>1.1</version>
+    <version>1.11</version>
     <updateURL>http://github.com/gongo/keysnail_plugin/blob/master/weather_search.ks.js</updateURL>
     <author mail="gonngo+github@gmail.com" homepage="http://d.hatena.ne.jp/gongoZ/">gongoZ</author>
     <license>The MIT License</license>
@@ -163,6 +163,6 @@ function weather_search() {
 				   actions: actions});  
 }
 
-ext.add("weacher_search", weather_search,
+ext.add("weather_search", weather_search,
         M({ja: '日本各都市の天気情報を表示',
            en: "Weather information on Japanese each city is displayed"}));

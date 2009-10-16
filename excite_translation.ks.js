@@ -4,7 +4,7 @@ var PLUGIN_INFO =
     <name lang="ja">エキサイト翻訳クライアント on KeySnail</name>
 	<description>Translation (ja, en, etc...)</description>
     <description lang="ja">エキサイト翻訳を KeySnail から利用する</description>
-    <version>1.10</version>
+    <version>1.11</version>
     <updateURL>http://github.com/gongo/keysnail_plugin/raw/master/excite_translation.ks.js</updateURL>
     <author mail="gonngo+github@gmail.com" homepage="http://d.hatena.ne.jp/gongoZ/">gongoZ</author>
     <license>The MIT License</license>
@@ -31,15 +31,31 @@ key.setViewKey(["C-x", "C-c", "e"],
 この中から翻訳したい方向を選んだあと、次に出てくるフォームに、翻訳したい原文が出てきます。
 入力し終わって Enter を押すと、popup で原文と翻訳後の文章が出ます。
 
+==== 翻訳できる言語の種類 ====
+- 和英、英和
+- 和仏、仏和、英仏、仏英
+- 和独、独和、英独、独英
+- 和伊、伊和、伊英、英伊
+
 ]]></detail>
 </KeySnailPlugin>;
 
-var trans_list = [];
-var JAEN = 0;
-var ENJA = 1;
-							  
-trans_list[JAEN] = ["je", "\u82F1\u548C", "JAEN"];
-trans_list[ENJA] = ["ej", "\u548C\u82F1", "ENJA"];
+var trans_list = new Array;
+
+trans_list.push([M({en:"Japanese to English", ja:"日本語から英語へ"}),      "english", "JAEN"]);
+trans_list.push([M({en:"English to Japanese", ja:"英語から日本語へ"}),      "english", "ENJA"]);
+trans_list.push([M({en:"Japanese to French",  ja:"日本語からフランス語へ"}), "french", "JAFR"]);
+trans_list.push([M({en:"French to Japanese",  ja:"フランス語から日本語へ"}), "french", "FRJA"]);
+trans_list.push([M({en:"English to French",   ja:"英語からフランス語へ"}),   "french", "ENFR"]);
+trans_list.push([M({en:"French to English",   ja:"フランス語から英語へ"}),   "french", "FREN"]);
+trans_list.push([M({en:"Japanese to German",  ja:"日本語からドイツ語へ"}),   "german", "JADE"]);
+trans_list.push([M({en:"German to Japanese",  ja:"ドイツ語から日本語へ"}),   "german", "DEJA"]);
+trans_list.push([M({en:"English to German",   ja:"英語からドイツ語へ"}),     "german", "ENDE"]);
+trans_list.push([M({en:"German to English",   ja:"ドイツ語から英語へ"}),     "german", "DEEN"]);
+trans_list.push([M({en:"Japanese to Italian", ja:"日本語からイタリア語へ"}), "italian", "JAIT"]);
+trans_list.push([M({en:"Italian to Japanese", ja:"イタリア語から日本語へ"}), "italian", "ITJA"]);
+trans_list.push([M({en:"English to Italian",  ja:"英語からイタリア語へ"}),   "italian", "ENIT"]);
+trans_list.push([M({en:"Italian to English",  ja:"イタリア語から英語へ"}),   "italian", "ITEN"]);
 
 function createHttpRequest() {
   if (window.ActiveXObject) {
@@ -86,11 +102,19 @@ function readString(sel) {
 				  }
 				};
 
-				var uri = "http://www.excite.co.jp/world/english/?";
+				var type = trans_list[trans][1];
 				var direction = trans_list[trans][2];
-                xhr.overrideMimeType("text/html; charset=Shift_JIS");
-                xhr.open("GET", uri + "wb_lp=" + direction + "&before=" + EscapeSJIS(input), true);
-                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+				var uri = "http://www.excite.co.jp/world/" + type + "/?";
+				var str;
+
+				if (type == "english") {
+                  xhr.overrideMimeType("text/html; charset=Shift_JIS");
+				  str = EscapeSJIS(input);
+				} else {
+				  str = encodeURIComponent(input);
+				}
+				xhr.open("GET", uri + "wb_lp=" + direction + "&before=" + str,
+						 true);
                 xhr.send("");
               },
               sel);
@@ -100,7 +124,7 @@ function excite_translation() {
   prompt.selector({
 					message: "Select Translation",
 					collection: trans_list,
-					flags: [0, 0, HIDDEN],
+					flags: [0, HIDDEN, HIDDEN],
 					callback: function (sel) {readString(sel);}
 				  });
 }

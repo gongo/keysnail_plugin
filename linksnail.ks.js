@@ -2,6 +2,7 @@ var PLUGIN_INFO =
 <KeySnailPlugin>
     <name>LinkSnail</name>
     <name lang="ja">LinkSnail</name>
+    <updateURL>https://raw.github.com/gongo/keysnail_plugin/master/linksnail.ks.js</updateURL>
     <description>Get link on the page currently open for Variety format (Markdown, org-mode, etc..)</description>
     <description lang="ja">現在開いているページへのリンクを、様々な形式 (Markdown や org-mode など)で取得します</description>
     <version>0.1</version>
@@ -14,6 +15,14 @@ var PLUGIN_INFO =
 Get link on the page currently open for Variety format (Markdown, org-mode, etc..).
 And copies it to the clipboard.
 
+=== Support Format ===
+- Markdown
+- Org-mode
+- Textile
+- reStructuredText
+- HTML
+- Plain
+
 === Usage ===
 >||
 key.setGlobalKey(['C-c', 't'], function (ev, arg) {
@@ -25,6 +34,14 @@ key.setGlobalKey(['C-c', 't'], function (ev, arg) {
 === 概要 ===
 現在開いているページへのリンクを、様々な形式 (Markdown や org-mode など)で取得します。
 取得したリンクはクリップボードにコピーされます。
+
+=== 対応フォーマット ===
+- Markdown
+- Org-mode
+- Textile
+- reStructuredText
+- HTML
+- Plain
 
 === 使い方 ===
 >||

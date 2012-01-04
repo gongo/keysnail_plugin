@@ -10,12 +10,28 @@ var PLUGIN_INFO =
     <license lang="ja">MAHALO ライセンス</license>
     <include>main</include>
     <detail><![CDATA[
+=== Overview ===
+Get link on the page currently open for Variety format (Markdown, org-mode, etc..).
+And copies it to the clipboard.
+
 === Usage ===
-Nothing.
+>||
+key.setGlobalKey(['C-c', 't'], function (ev, arg) {
+    ext.exec('linksnail', arg, ev);
+}, 'LinkSnail', true);
+||<
     ]]></detail>
     <detail lang="ja"><![CDATA[
+=== 概要 ===
+現在開いているページへのリンクを、様々な形式 (Markdown や org-mode など)で取得します。
+取得したリンクはクリップボードにコピーされます。
+
 === 使い方 ===
-なし。
+>||
+key.setGlobalKey(['C-c', 't'], function (ev, arg) {
+    ext.exec('linksnail', arg, ev);
+}, 'LinkSnail', true);
+||<
     ]]></detail>
 </KeySnailPlugin>;
 
@@ -25,13 +41,15 @@ var linksnail =
             ["Markdown"         , "[text](uri)"],
             ["Org-mode"         , "[[uri][text]]"],
             ["Textile"          , "\"text\":uri"],
-            ["reStructuredText" , "`text` <uri>"]
+            ["reStructuredText" , "`text` <uri>"],
+            ["HTML"             , "<a href=\"uri\">text</a>"],
+            ["Plain"            , "text / uri"]
         ];
 
         var self = {
             formatSelector: function() {
                 prompt.selector({
-                    message    : "get link",
+                    message    : "Select format",
                     collection : formatCollection,
                     header     : ["name", "syntax"],
                     callback   : function(index) {
@@ -43,7 +61,11 @@ var linksnail =
                         link = format.replace("uri", uri);
                         link = link.replace("text", text);
 
-                        return display.prettyPrint(link);
+                        const CLIPBOARD = Components.classes[
+                            '@mozilla.org/widget/clipboardhelper;1'
+                        ].getService(Components.interfaces.nsIClipboardHelper);
+
+                        CLIPBOARD.copyString(link);
                     }
                 });
             }
@@ -55,5 +77,5 @@ var linksnail =
 plugins.withProvides(function (provide) {
     provide("linksnail", function() {
         linksnail.formatSelector();
-    }, "Prev page");
+    }, "LinkSnail");
 }, PLUGIN_INFO);

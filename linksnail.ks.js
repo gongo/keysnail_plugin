@@ -59,13 +59,13 @@ key.setGlobalKey(['C-c', 't'], function (ev, arg) {
 var linksnail =
     (function() {
         var formatCollection = [
-            ["Markdown"         , "[text](uri)"],
-            ["Org-mode"         , "[[uri][text]]"],
-            ["Textile"          , "\"text\":uri"],
-            ["reStructuredText" , "`text` <uri>"],
-            ["HTML"             , "<a href=\"uri\">text</a>"],
-            ["Plain"            , "text / uri"],
-            ["URI"              , "uri"],
+            ["Markdown"         , "[{text}]({uri})"],
+            ["Org-mode"         , "[[{uri}][{text}]]"],
+            ["Textile"          , "\"{text}\":{uri}"],
+            ["reStructuredText" , "`{text}` <{uri}>"],
+            ["HTML"             , "<a href=\"{uri}\">{text}</a>"],
+            ["Plain"            , "{text} / {uri}"],
+            ["URI"              , "{uri}"],
         ];
 
         function copyLink(link){
@@ -78,8 +78,8 @@ var linksnail =
 
         function formatTextAndURI(format, text, uri){
             var link = "";
-            link = format.replace("uri", uri);
-            link = link.replace("text", text);
+            link = format.replace("{uri}", uri);
+            link = link.replace("{text}", text);
             return link;
         };
 

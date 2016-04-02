@@ -12,8 +12,8 @@ var PLUGIN_INFO =
     <include>main</include>
     <detail><![CDATA[
 === Overview ===
-Get link on the page currently open for Variety format (Markdown, org-mode, etc..).
-And copies it to the clipboard.
+Get a link to the page currently open in a variety of formats (Markdown, org-mode, etc..),
+and copy it to the clipboard.
 It is also possible to get and copy links of all the tabs on current window.
 
 === Support Format ===

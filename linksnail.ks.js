@@ -78,8 +78,8 @@ var linksnail =
 
         function formatTextAndURI(format, text, uri){
             var link = "";
-            link = format.replace("{uri}", uri);
-            link = link.replace("{text}", text);
+            link = format.replace(/\{uri\}/g, uri);
+            link = link.replace(/\{text\}/g, text);
             return link;
         };
 

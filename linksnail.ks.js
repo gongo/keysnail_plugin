@@ -56,17 +56,33 @@ key.setGlobalKey(['C-c', 't'], function (ev, arg) {
     ]]></detail>
 </KeySnailPlugin>;
 
+var pOptions = plugins.setupOptions("linksnail", {
+    "formats": {
+        preset: {
+            "Markdown": "[{text}]({uri})",
+            "Org-mode": "[[{uri}][{text}]]",
+            "Textile": "\"{text}\":{uri}",
+            "reStructuredText": "`{text}` <{uri}>",
+            "HTML": "<a href=\"{uri}\">{text}</a>",
+            "Plain": "{text} / {uri}",
+            "URI": "{uri}"
+        },
+        description: M({
+            en: "Link formats",
+            jp: "リンクフォーマット"
+        }),
+        type: "object ({format_name: format})"
+    }
+}, PLUGIN_INFO);
+
+
 var linksnail =
     (function() {
-        var formatCollection = [
-            ["Markdown"         , "[{text}]({uri})"],
-            ["Org-mode"         , "[[{uri}][{text}]]"],
-            ["Textile"          , "\"{text}\":{uri}"],
-            ["reStructuredText" , "`{text}` <{uri}>"],
-            ["HTML"             , "<a href=\"{uri}\">{text}</a>"],
-            ["Plain"            , "{text} / {uri}"],
-            ["URI"              , "{uri}"],
-        ];
+        function getFormatCollection() {
+            return Object.keys(pOptions["formats"]).map(function(format_name) {
+                return [format_name, pOptions["formats"][format_name]];
+            });
+        };
 
         function copyLink(link){
             const CLIPBOARD = Components.classes[
@@ -86,7 +102,7 @@ var linksnail =
         function formatSelector(next) {
             prompt.selector({
                 message    : "Select format",
-                collection : formatCollection,
+                collection : getFormatCollection(),
                 header     : ["name", "syntax"],
                 callback   : next,
             });
@@ -94,17 +110,17 @@ var linksnail =
 
         var self = {
             copyThisPage : function() {
-                formatSelector(function(index){
+                formatSelector(function(index, collection){
                     var uri    = content.location.href;
                     var text   = content.document.title;
-                    var format = formatCollection[index][1];
+                    var format = collection[index][1];
 
                     copyLink(formatTextAndURI(format, text, uri));
                 });
             },
             copyAllPage : function() {
-                formatSelector(function(index){
-                    var format = formatCollection[index][1];
+                formatSelector(function(index, collection){
+                    var format = collection[index][1];
                     var a = [(function(){
                         var browser = tab.linkedBrowser;
                         var win     = browser.contentWindow;

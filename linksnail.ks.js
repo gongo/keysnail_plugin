@@ -10,6 +10,7 @@ var PLUGIN_INFO =
     <license>MAHALO License</license>
     <license lang="ja">MAHALO ライセンス</license>
     <include>main</include>
+    <minVersion>1.8.5</minVersion>
     <detail><![CDATA[
 === Overview ===
 Get a link to the page currently open in a variety of formats (Markdown, org-mode, etc..),
@@ -71,7 +72,7 @@ var pOptions = plugins.setupOptions("linksnail", {
             en: "Link formats",
             jp: "リンクフォーマット"
         }),
-        type: "object ({format_name: format})"
+        type: "object ({format_name: format}). `format` is either String or Function. The Function is passed two arguments (text, uri), and should return the formatted link."
     }
 }, PLUGIN_INFO);
 
@@ -80,7 +81,9 @@ var linksnail =
     (function() {
         function getFormatCollection() {
             return Object.keys(pOptions["formats"]).map(function(format_name) {
-                return [format_name, pOptions["formats"][format_name]];
+                var general_format = pOptions["formats"][format_name];
+                var desc = _.isFunction(general_format) ? "" : general_format;
+                return [format_name, desc];
             });
         };
 
@@ -92,11 +95,18 @@ var linksnail =
             CLIPBOARD.copyString(link);
         };
 
-        function formatTextAndURI(format, text, uri){
-            var link = "";
-            link = format.replace(/\{uri\}/g, uri);
-            link = link.replace(/\{text\}/g, text);
-            return link;
+        function getFormatter(format_name) {
+            var general_format = pOptions["formats"][format_name];
+            if(_.isFunction(general_format)) {
+                return general_format;
+            }else {
+                return function(text, uri) {
+                    var link = "";
+                    link = general_format.replace(/\{uri\}/g, uri);
+                    link = link.replace(/\{text\}/g, text);
+                    return link;
+                };
+            }
         };
 
         function formatSelector(next) {
@@ -113,21 +123,21 @@ var linksnail =
                 formatSelector(function(index, collection){
                     var uri    = content.location.href;
                     var text   = content.document.title;
-                    var format = collection[index][1];
+                    var formatter = getFormatter(collection[index][0]);
 
-                    copyLink(formatTextAndURI(format, text, uri));
+                    copyLink(formatter(text, uri));
                 });
             },
             copyAllPage : function() {
                 formatSelector(function(index, collection){
-                    var format = collection[index][1];
+                    var formatter = getFormatter(collection[index][0]);
                     var a = [(function(){
                         var browser = tab.linkedBrowser;
                         var win     = browser.contentWindow;
 
                         var text = tab.label;
                         var url   = win.location.href;
-                        return formatTextAndURI(format, text, url);
+                        return formatter(text, url);
                     })() for each (tab in Array.slice(gBrowser.mTabContainer.childNodes))];
 
                     copyLink(a.join("\n"));

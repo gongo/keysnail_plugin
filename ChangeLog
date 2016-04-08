@@ -1,3 +1,13 @@
+2016-04-08  debug-ito <debug.ito@gmail.com>
+
+	* linksnail.ks.js 0.2.0:
+	- Use "{}" in format texts. This makes the formatting more robust
+	especially when "text" is included in the URI.
+
+	- Now formats are configurable via option `linksnail.formats`.
+
+	- A Function can now be used to format the link.
+
 2009-10-06  gongo  <gonngo@gmail.com>
 
 	* excite_translation.js: TODO

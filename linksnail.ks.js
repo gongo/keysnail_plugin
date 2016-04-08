@@ -69,10 +69,10 @@ var pOptions = plugins.setupOptions("linksnail", {
             "URI": "{uri}"
         },
         description: M({
-            en: "Link formats",
-            jp: "リンクフォーマット"
+            en: "Link formats object. `format` is either String or Function. If it's String it's the format template, where \"{text}\" and \"{uri}\" are replaced when linksnail is activated. If it's Function, it's called with three arguments (`text`, `uri`, `window`), and it should return the formatted link.",
+            jp: "リンクフォーマットオブジェクト。`format`はStringもしくはFunctionです。Stringの場合、これはフォーマットテンプレート文字列となります。linksnail起動時にテンプレート内の\"{text}\"と\"{uri}\"が置換されます。Functionの場合、3つの引数(`text`, `uri`, `window`)で呼び出されます。この関数はフォーマットしたリンク文字列を返す必要があります。"
         }),
-        type: "object ({format_name: format}). `format` is either String or Function. The Function is passed two arguments (text, uri), and should return the formatted link."
+        type: "object ({format_name: format, ... })."
     }
 }, PLUGIN_INFO);
 
@@ -95,15 +95,20 @@ var linksnail =
             CLIPBOARD.copyString(link);
         };
 
+        function windowText(win) { return win.document.title; };
+        function windowURI(win) { return win.location.href; };
+
         function getFormatter(format_name) {
             var general_format = pOptions["formats"][format_name];
             if(_.isFunction(general_format)) {
-                return general_format;
+                return function(win) {
+                    return general_format(windowText(win), windowURI(win), win);
+                };
             }else {
-                return function(text, uri) {
+                return function(win) {
                     var link = "";
-                    link = general_format.replace(/\{uri\}/g, uri);
-                    link = link.replace(/\{text\}/g, text);
+                    link = general_format.replace(/\{uri\}/g, windowURI(win));
+                    link = link.replace(/\{text\}/g, windowText(win));
                     return link;
                 };
             }
@@ -121,11 +126,8 @@ var linksnail =
         var self = {
             copyThisPage : function() {
                 formatSelector(function(index, collection){
-                    var uri    = content.location.href;
-                    var text   = content.document.title;
                     var formatter = getFormatter(collection[index][0]);
-
-                    copyLink(formatter(text, uri));
+                    copyLink(formatter(content));
                 });
             },
             copyAllPage : function() {
@@ -134,10 +136,7 @@ var linksnail =
                     var a = [(function(){
                         var browser = tab.linkedBrowser;
                         var win     = browser.contentWindow;
-
-                        var text = tab.label;
-                        var url   = win.location.href;
-                        return formatter(text, url);
+                        return formatter(win);
                     })() for each (tab in Array.slice(gBrowser.mTabContainer.childNodes))];
 
                     copyLink(a.join("\n"));

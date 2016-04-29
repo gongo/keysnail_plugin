@@ -5,7 +5,7 @@ var PLUGIN_INFO =
     <updateURL>https://raw.github.com/gongo/keysnail_plugin/master/linksnail.ks.js</updateURL>
     <description>Get link on the page currently open for Variety format (Markdown, org-mode, etc..)</description>
     <description lang="ja">現在開いているページへのリンクを、様々な形式 (Markdown や org-mode など)で取得します</description>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
     <author mail="gonngo@gmail.com" homepage="http://d.hatena.ne.jp/gongoZ/">gongoZ</author>
     <license>MAHALO License</license>
     <license lang="ja">MAHALO ライセンス</license>
@@ -133,12 +133,11 @@ var linksnail =
             copyAllPage : function() {
                 formatSelector(function(index, collection){
                     var formatter = getFormatter(collection[index][0]);
-                    var a = [(function(){
+                    var a = Array.from(gBrowser.mTabContainer.childNodes).map(function(tab) {
                         var browser = tab.linkedBrowser;
                         var win     = browser.contentWindow;
                         return formatter(win);
-                    })() for each (tab in Array.slice(gBrowser.mTabContainer.childNodes))];
-
+                    });
                     copyLink(a.join("\n"));
                 })
             },
